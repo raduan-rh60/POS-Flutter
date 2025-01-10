@@ -11,8 +11,8 @@ class HomeSummary extends StatefulWidget {
 class _HomeSummaryState extends State<HomeSummary> {
   @override
   Widget build(BuildContext context) {
-    return  Expanded(
-        flex: 4,
+    return  SizedBox(
+        height: 250,
         child: Card(
           margin: EdgeInsets.all(10),
           color: Colors.blue.shade50,

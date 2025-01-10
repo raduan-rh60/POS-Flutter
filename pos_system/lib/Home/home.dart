@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pos_system/Home/home_navigate_buttons.dart';
 import 'package:pos_system/Home/home_summary.dart';
 
 class Home extends StatefulWidget {
@@ -12,19 +13,61 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration:
+                  BoxDecoration(color: Colors.deepPurpleAccent.shade100),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 35,
+                    backgroundImage: AssetImage("user.jpg"),
+                  ),
+                  Text(
+                    "Raduan",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Admin",
+                    style: TextStyle(fontSize: 18, ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text('Home'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: SizedBox(
           width: MediaQuery.sizeOf(context).height / 2,
           height: 60,
           child: ListTile(
-            leading: InkWell(
-              onTap: (){},
-              child: Material(
-                borderRadius: BorderRadius.circular(15),
-                elevation: 4,
-                child: ClipRRect(
+            leading: Builder(
+              builder: (context) => InkWell(
+                onTap: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                child: Material(
                   borderRadius: BorderRadius.circular(15),
-                  child: Image.asset("user.jpg"),
+                  elevation: 4,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.asset("user.jpg"),
+                  ),
                 ),
               ),
             ),
@@ -51,104 +94,10 @@ class _HomeState extends State<Home> {
       ),
       body: Column(
         children: [
+          // Home Daily Summary Section
           HomeSummary(),
-          // Expanded(
-          //     flex: 4,
-          //     child: Card(
-          //       margin: EdgeInsets.all(10),
-          //       color: Colors.blue.shade50,
-          //       child: Column(
-          //         children: [
-          //           Padding(
-          //             padding: const EdgeInsets.only(
-          //               left: 20,
-          //               right: 10,
-          //               top: 10,
-          //             ),
-          //             child: Row(
-          //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //               children: [
-          //                 Text("Today Report"),
-          //                 TextButton(
-          //                     onPressed: () {}, child: Text("View Detail"))
-          //               ],
-          //             ),
-          //           ),
-          //           Row(
-          //             children: [
-          //               Expanded(
-          //                 flex: 4,
-          //                 child: Card(
-          //                   color: Colors.lightBlueAccent.shade100,
-          //                   margin: EdgeInsets.all(10),
-          //                   child: Padding(
-          //                     padding: const EdgeInsets.all(15.0),
-          //                     child: Column(
-          //                       children: [
-          //                         CircleAvatar(
-          //                           child: Icon(Icons.discount_outlined),
-          //                         ),
-          //                         Text("sales"),
-          //                         Text("20,000 TK")
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ),
-          //               ),
-          //               Expanded(
-          //                 flex: 4,
-          //                 child: Card(
-          //                   color: Colors.yellowAccent[100],
-          //                   margin: EdgeInsets.all(10),
-          //                   child: Padding(
-          //                     padding: const EdgeInsets.all(15.0),
-          //                     child: Column(
-          //                       children: [
-          //                         CircleAvatar(
-          //                           child:
-          //                               Icon(Icons.align_vertical_top_rounded),
-          //                         ),
-          //                         Text("sales"),
-          //                         Text("20,000 TK")
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ),
-          //               ),
-          //               Expanded(
-          //                 flex: 4,
-          //                 child: Card(
-          //                   color: Colors.redAccent[100],
-          //                   margin: EdgeInsets.all(10),
-          //                   child: Padding(
-          //                     padding: const EdgeInsets.all(15.0),
-          //                     child: Column(
-          //                       children: [
-          //                         CircleAvatar(
-          //                           child: Icon(Icons.money),
-          //                         ),
-          //                         Text("Expenses"),
-          //                         Text("20,000 TK")
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ),
-          //               ),
-          //             ],
-          //           )
-          //         ],
-          //       ),
-          //     )),
-          Expanded(
-            flex: 10,
-            child: GridView(
-              gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
-            children: [
-
-            ],
-            ),
-          )
+          // Home Icon Button Section
+          NavigateButtn(),
         ],
       ),
     );
