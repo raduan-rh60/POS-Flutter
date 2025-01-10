@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Home/home.dart';
+
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -76,7 +78,9 @@ class _LoginState extends State<Login> {
                 height: 10,
               ),
               ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Home()));
+                  },
                   child: Text(
                     "Login",
                     style: TextStyle(
