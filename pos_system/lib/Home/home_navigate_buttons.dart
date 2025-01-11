@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pos_system/product/products.dart';
 
 class NavigateButtn extends StatefulWidget {
   const NavigateButtn({super.key});
@@ -18,7 +19,9 @@ class _NavigateButtnState extends State<NavigateButtn> {
               maxCrossAxisExtent: 90, crossAxisSpacing: 5, mainAxisSpacing: 10),
           children: [
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>Products()));
+              },
               child: Column(
                 children: [
                   CircleAvatar(
