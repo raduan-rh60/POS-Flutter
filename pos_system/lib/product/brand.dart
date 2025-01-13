@@ -32,10 +32,10 @@ class _BrandsState extends State<Brands> {
 
   @override
   Widget build(BuildContext context) {
-    return brands!.isNotEmpty
+    return brands!=null
         ? Scaffold(
       appBar: AppBar(
-        title: Text("Categories"),
+        title: Text("Brands"),
       ),
       body: Column(
         children: [
@@ -105,6 +105,6 @@ class _BrandsState extends State<Brands> {
         ],
       ),
     )
-        : CircularProgressIndicator();
+        : Center(child: CircularProgressIndicator());
   }
 }

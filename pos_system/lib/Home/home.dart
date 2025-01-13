@@ -52,9 +52,10 @@ class _HomeState extends State<Home> {
       ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: SizedBox(
+        title: Container(
           width: MediaQuery.sizeOf(context).height / 2,
-          height: 60,
+          height: 70,
+          margin: EdgeInsets.only(bottom: 10),
           child: ListTile(
             leading: Builder(
               builder: (context) => InkWell(
@@ -66,7 +67,7 @@ class _HomeState extends State<Home> {
                   elevation: 4,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: Image.asset("user.jpg"),
+                    child: Image.asset("user.jpg",width: 45,height: 45,),
                   ),
                 ),
               ),

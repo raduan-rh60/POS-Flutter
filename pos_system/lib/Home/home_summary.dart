@@ -12,7 +12,7 @@ class _HomeSummaryState extends State<HomeSummary> {
   @override
   Widget build(BuildContext context) {
     return  SizedBox(
-        height: 250,
+        height: 200,
         child: Card(
           margin: EdgeInsets.all(10),
           color: Colors.blue.shade50,
@@ -48,7 +48,7 @@ class _HomeSummaryState extends State<HomeSummary> {
                               child: Icon(Icons.discount_outlined),
                             ),
                             Text("sales"),
-                            Text("20,000 TK")
+                            Text("20,000 TK",style: TextStyle(fontWeight: FontWeight.bold),)
                           ],
                         ),
                       ),
@@ -67,8 +67,8 @@ class _HomeSummaryState extends State<HomeSummary> {
                               child:
                               Icon(Icons.align_vertical_top_rounded),
                             ),
-                            Text("sales"),
-                            Text("20,000 TK")
+                            Text("profit"),
+                            Text("20,000 TK",style: TextStyle(fontWeight: FontWeight.bold),)
                           ],
                         ),
                       ),
@@ -87,7 +87,7 @@ class _HomeSummaryState extends State<HomeSummary> {
                               child: Icon(Icons.money),
                             ),
                             Text("Expenses"),
-                            Text("20,000 TK")
+                            Text("20,000 TK",style: TextStyle(fontWeight: FontWeight.bold),)
                           ],
                         ),
                       ),

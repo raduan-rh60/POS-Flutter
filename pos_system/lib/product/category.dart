@@ -32,7 +32,7 @@ class _CategoryState extends State<Category> {
 
   @override
   Widget build(BuildContext context) {
-    return categories!.isNotEmpty
+    return categories!=null
         ? Scaffold(
             appBar: AppBar(
               title: Text("Categories"),
@@ -105,6 +105,6 @@ class _CategoryState extends State<Category> {
               ],
             ),
           )
-        : CircularProgressIndicator();
+        : Container(child: CircularProgressIndicator());
   }
 }

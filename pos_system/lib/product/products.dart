@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pos_system/Home/home.dart';
 import 'package:pos_system/product/brand.dart';
 import 'package:pos_system/product/category.dart';
 
@@ -65,6 +66,22 @@ class _ProductsState extends State<Products> {
               children: [
                 SizedBox(
                   height: 60,
+                ),
+                ListTile(
+                  leading: Icon(Icons.dashboard_outlined),
+                  title: Text('Dashboard'),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()));
+
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.add_box_outlined),
+                  title: Text('Add Product'),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()));
+
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.category_outlined),
