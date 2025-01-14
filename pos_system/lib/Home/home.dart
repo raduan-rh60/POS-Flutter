@@ -93,13 +93,15 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      body: Column(
-        children: [
-          // Home Daily Summary Section
-          HomeSummary(),
-          // Home Icon Button Section
-          NavigateButtn(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Home Daily Summary Section
+            HomeSummary(),
+            // Home Icon Button Section
+            NavigateButtn(),
+          ],
+        ),
       ),
     );
   }
