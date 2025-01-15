@@ -142,7 +142,7 @@ class _NavigateButtnState extends State<NavigateButtn> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.asset(
-                        "icons/damage.png",
+                        "icons/pos.png",
                         fit: BoxFit.fitWidth,
                       ),
                     ),
