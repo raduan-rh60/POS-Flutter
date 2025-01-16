@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pos_system/damage/damage_data.dart';
+import 'package:pos_system/pos/pos_products.dart';
 import 'package:pos_system/product/products.dart';
 import 'package:pos_system/purchase/purchase_view.dart';
 import 'package:pos_system/return/return_product_view.dart';
@@ -21,8 +22,8 @@ class _NavigateButtnState extends State<NavigateButtn> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20),
         child: GridView(
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 90, crossAxisSpacing: 5, mainAxisSpacing: 10),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 10),
           children: [
             InkWell(
               onTap: () {
@@ -132,7 +133,7 @@ class _NavigateButtnState extends State<NavigateButtn> {
 
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>DamageData()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>PosProducts()));
               },
               child: Column(
                 children: [
