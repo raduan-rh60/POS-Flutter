@@ -37,26 +37,22 @@ class _ProductsState extends State<Products> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
           title: Text("Products"),
           backgroundColor: Colors.white,
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
-              child: Builder(
-                builder: (context) {
-                  return IconButton(
-                    icon: Icon(Icons.menu), // Drawer icon
-                    onPressed: () {
-                      Scaffold.of(context).openEndDrawer(); // Open the drawer
-                    },
-                  );
-                }
-              ),
+              child: Builder(builder: (context) {
+                return IconButton(
+                  icon: Icon(Icons.menu), // Drawer icon
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer(); // Open the drawer
+                  },
+                );
+              }),
             ),
           ],
         ),
-
         endDrawer: Align(
           alignment: Alignment.bottomRight,
           child: Drawer(
@@ -71,125 +67,121 @@ class _ProductsState extends State<Products> {
                   leading: Icon(Icons.dashboard_outlined),
                   title: Text('Dashboard'),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()));
-
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Home()));
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.add_box_outlined),
                   title: Text('Add Product'),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()));
-
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Home()));
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.category_outlined),
                   title: Text('Categories'),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Category()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Category()));
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.branding_watermark_outlined),
                   title: Text('Brands'),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Brands()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Brands()));
                   },
                 ),
               ],
             ),
           ),
         ),
-
-        floatingActionButton:SizedBox(
+        floatingActionButton: SizedBox(
           width: 90,
           child: FloatingActionButton(
             onPressed: () {},
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Padding(
               padding: EdgeInsets.only(left: 15),
               child: Row(
-                children: [
-                  Icon(Icons.add_circle_outline_sharp),
-                  Text(" Add")
-                ],
+                children: [Icon(Icons.add_circle_outline_sharp), Text(" Add")],
               ),
             ),
           ),
-        ) ,
+        ),
         body: products != null
             ? ListView.builder(
-              itemCount: products!.length,
-              itemBuilder: (context, index) {
-                var product = products![index];
-                var imageData = base64Decode("${product["image"]}");
-                return Card(
-                  elevation: 4,
-                  margin: EdgeInsets.all(8),
-                  child: ListTile(
-                    leading: Image.memory(
-                      imageData,
-                      width: 60,
-                      height: 60,
-                    ),
-                    title: Text(product["name"],
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20)),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Category: ",
-                              style:
-                                  TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(product["category"]),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Brand: ",
-                              style:
-                                  TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(product["brand"]),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Stock: ",
-                              style:
-                                  TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text("${product["stock"]}",
+                itemCount: products!.length,
+                itemBuilder: (context, index) {
+                  var product = products![index];
+                  var imageData = base64Decode("${product["image"]}");
+                  return Card(
+                    elevation: 4,
+                    margin: EdgeInsets.all(8),
+                    child: ListTile(
+                      leading: Image.memory(
+                        imageData,
+                        width: 60,
+                        height: 60,
+                      ),
+                      title: Text(product["name"],
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20)),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "Category: ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(product["category"]),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Brand: ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(product["brand"]),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Stock: ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text("${product["stock"]}",
+                                  style: TextStyle(
+                                      color: product["stock"] > 200
+                                          ? Colors.black
+                                          : Colors.red)),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "Price: ",
                                 style: TextStyle(
-                                    color: product["stock"] > 200
-                                        ? Colors.black
-                                        : Colors.red)),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Price: ",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue),
-                            ),
-                            Text("${product["price"]}"),
-                          ],
-                        ),
-                      ],
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue),
+                              ),
+                              Text("${product["price"]}"),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            )
+                  );
+                },
+              )
             : Center(
                 child: CircularProgressIndicator(
                 color: Colors.deepPurpleAccent,

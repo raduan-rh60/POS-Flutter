@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -12,59 +11,84 @@ class PosProducts extends StatefulWidget {
 }
 
 class _PosProductsState extends State<PosProducts> {
+  late List<Map<String, dynamic>> products = []; // Initialize as an empty list
+  List<Map<String, dynamic>> cartItems = []; // Initialize as an empty list
+  List<Map<String, dynamic>>? filteredProducts; // Filtered products for display
+  List<Map<String, dynamic>> categories = []; // Initialize as an empty list
+
+  String? selectedCategory;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getProductData();
     getCartProducts();
     getCategory();
   }
 
-  List<Map<String, dynamic>>? products;
-  List<Map<String, dynamic>>? cartItems;
-  List<Map<String, dynamic>>? filteredProducts; // Filtered products for display
-  List<Map<String, dynamic>>? categories;
-
-  String? selectedCategory;
-
-  final TextEditingController _searchController = TextEditingController();
-
   getProductData() async {
-    var productsResponse =
-        await http.get(Uri.parse("http://localhost:8080/api/product"));
-    var productData = jsonDecode(productsResponse.body);
+    try {
+      var productsResponse =
+      await http.get(Uri.parse("http://localhost:8080/api/product"));
+      var productData = jsonDecode(productsResponse.body);
 
-    setState(() {
-      products = List<Map<String, dynamic>>.from(productData);
-      filteredProducts = products;
-    });
+      setState(() {
+        products = List<Map<String, dynamic>>.from(productData);
+        filteredProducts = products;
+      });
+    } catch (e) {
+      print("Failed to fetch product data: $e");
+    }
   }
 
   getCartProducts() async {
-    var cartResponse =
-        await http.get(Uri.parse("http://localhost:8080/api/cart"));
-    if (cartResponse.statusCode == 200) {
-      var cartData = jsonDecode(cartResponse.body);
-      setState(() {
-        cartItems = List<Map<String, dynamic>>.from(cartData);
-      });
-    } else {
-      print("Failed to fetch cart products");
+    try {
+      var cartResponse =
+      await http.get(Uri.parse("http://localhost:8080/api/cart"));
+      if (cartResponse.statusCode == 200) {
+        var cartData = jsonDecode(cartResponse.body);
+        setState(() {
+          cartItems = List<Map<String, dynamic>>.from(cartData);
+        });
+      } else {
+        print("Failed to fetch cart products");
+      }
+    } catch (e) {
+      print("Failed to fetch cart data: $e");
+    }
+  }
+
+  getCategory() async {
+    try {
+      var getCategories =
+      await http.get(Uri.parse("http://localhost:8080/api/category"));
+      if (getCategories.statusCode == 200) {
+        var categoryResponse = jsonDecode(getCategories.body);
+        setState(() {
+          categories = List<Map<String, dynamic>>.from(categoryResponse);
+        });
+      } else {
+        print("Failed to fetch categories");
+      }
+    } catch (e) {
+      print("Failed to fetch categories: $e");
     }
   }
 
   passProduct(int productId) async {
-    var passProduct = await http.post(
-      Uri.parse("http://localhost:8080/api/cart/new?productId=$productId"),
-      body: null,
-    );
-    if (passProduct.statusCode == 200) {
-      await getCartProducts(); // Fetch updated cart items
-      setState(() {}); // Trigger a rebuild to update the UI
-    } else {
-      // Handle errors if necessary
-      print("Failed to add product to cart");
+    try {
+      var passProduct = await http.post(
+        Uri.parse("http://localhost:8080/api/cart/new?productId=$productId"),
+        body: null,
+      );
+      if (passProduct.statusCode == 200) {
+        await getCartProducts(); // Fetch updated cart items
+        setState(() {}); // Trigger a rebuild to update the UI
+      } else {
+        print("Failed to add product to cart");
+      }
+    } catch (e) {
+      print("Failed to add product to cart: $e");
     }
   }
 
@@ -75,7 +99,7 @@ class _PosProductsState extends State<PosProducts> {
       });
     } else {
       setState(() {
-        filteredProducts = products!.where((product) {
+        filteredProducts = products.where((product) {
           return product['name']
               .toString()
               .toLowerCase()
@@ -92,7 +116,7 @@ class _PosProductsState extends State<PosProducts> {
       });
     } else {
       setState(() {
-        filteredProducts = products!.where((product) {
+        filteredProducts = products.where((product) {
           return product['category']
               .toString()
               .toLowerCase()
@@ -109,7 +133,7 @@ class _PosProductsState extends State<PosProducts> {
       });
     } else {
       setState(() {
-        filteredProducts = products!.where((product) {
+        filteredProducts = products.where((product) {
           return product['id']
               .toString()
               .toLowerCase()
@@ -119,39 +143,26 @@ class _PosProductsState extends State<PosProducts> {
     }
   }
 
-  getCategory() async {
-    var getCategories =
-        await http.get(Uri.parse("http://localhost:8080/api/category"));
-    if (getCategories.statusCode == 200) {
-      var categoryResponse = jsonDecode(getCategories.body);
-      setState(() {
-        categories = List<Map<String, dynamic>>.from(categoryResponse);
-      });
-    } else {
-      print("Failed to fetch categories");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Select Products"),
       ),
-      floatingActionButton: (cartItems != null && cartItems!.isNotEmpty)
+      floatingActionButton: ( cartItems.isNotEmpty)
           ? AnimatedAlign(
-              duration: Duration(seconds: 1),
-              alignment: Alignment.bottomRight,
-              child: SizedBox(
-                width: 100,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PosCart()));
-                  },
-                  child: Text("View Cart"),
-                ),
-              ),
-            )
+        duration: Duration(seconds: 1),
+        alignment: Alignment.bottomRight,
+        child: SizedBox(
+          width: 100,
+          child: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>PosCart()));
+            },
+            child: Text("View Cart"),
+          ),
+        ),
+      )
           : null,
       body: Column(
         children: [
@@ -164,7 +175,7 @@ class _PosProductsState extends State<PosProducts> {
                     child: TextFormField(
                       decoration: InputDecoration(
                         floatingLabelStyle:
-                            TextStyle(color: Colors.deepPurpleAccent),
+                        TextStyle(color: Colors.deepPurpleAccent),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Colors.deepPurpleAccent, width: 2),
@@ -182,7 +193,7 @@ class _PosProductsState extends State<PosProducts> {
                         ),
                       ),
                       onChanged:
-                          searchProduct, // Call searchProduct on text change
+                      searchProduct, // Call searchProduct on text change
                     ),
                   ),
                   Padding(
@@ -199,7 +210,7 @@ class _PosProductsState extends State<PosProducts> {
                             dropdownColor: Color(0xffeaddff),
                             style: TextStyle(color: Color(0xff301069)),
                             hint: const Text("Category"),
-                            items: categories!.map((category) {
+                            items: categories.map((category) {
                               return DropdownMenuItem<String>(
                                 value: category['name'],
                                 child: Text(category['name']),
@@ -207,11 +218,9 @@ class _PosProductsState extends State<PosProducts> {
                             }).toList(),
                             onChanged: (value) {
                               setState(() {
-                                selectedCategory =
-                                    value; // Update the selected category
+                                selectedCategory = value; // Update the selected category
                               });
-                              searchProductByCategory(
-                                  value!); // Call the method with the selected value
+                              searchProductByCategory(value!); // Call the method with the selected value
                             },
                             isExpanded: true,
                           ),
@@ -222,7 +231,7 @@ class _PosProductsState extends State<PosProducts> {
                           child: TextFormField(
                             decoration: InputDecoration(
                               floatingLabelStyle:
-                                  TextStyle(color: Colors.deepPurpleAccent),
+                              TextStyle(color: Colors.deepPurpleAccent),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Colors.deepPurpleAccent, width: 2),
@@ -240,7 +249,7 @@ class _PosProductsState extends State<PosProducts> {
                               ),
                             ),
                             onChanged:
-                                searchProductById, // Call searchProduct on text change
+                            searchProductById, // Call searchProduct on text change
                           ),
                         )
                       ],
@@ -254,59 +263,59 @@ class _PosProductsState extends State<PosProducts> {
               padding: const EdgeInsets.all(8.0),
               child: filteredProducts != null
                   ? GridView.builder(
-                      itemCount: filteredProducts!.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10),
-                      itemBuilder: (context, index) {
-                        var product = filteredProducts![index];
-                        var imageData = base64Decode("${product["image"]}");
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              passProduct(product["id"]);
-                            });
-                          },
-                          child: Card(
-                            shape: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: cartItems!.any((cartItem) =>
-                                            cartItem['productId'] ==
-                                            product['id'])
-                                        ? Colors.blue
-                                        : Colors.grey.shade100),
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Image.memory(
-                                      imageData,
-                                      width: 100,
-                                      height: 100,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  product['name'],
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
+                itemCount: filteredProducts!.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10),
+                itemBuilder: (context, index) {
+                  var product = filteredProducts![index];
+                  var imageData = base64Decode("${product["image"]}");
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        passProduct(product["id"]);
+                      });
+                    },
+                    child: Card(
+                      shape: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: cartItems.any((cartItem) =>
+                              cartItem['productId'] ==
+                                  product['id'])
+                                  ? Colors.blue
+                                  : Colors.grey.shade100),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Image.memory(
+                                imageData,
+                                width: 100,
+                                height: 100,
+                              ),
                             ),
                           ),
-                        );
-                      },
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(),
+                          Text(
+                            product['name'],
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
+                  );
+                },
+              )
+                  : Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
           ),
         ],
@@ -314,3 +323,4 @@ class _PosProductsState extends State<PosProducts> {
     );
   }
 }
+

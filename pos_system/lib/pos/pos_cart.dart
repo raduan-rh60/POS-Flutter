@@ -15,6 +15,13 @@ class _PosCartState extends State<PosCart> {
   String? selectedOrderStatus;
   String? selectedTransactionType;
 
+  int discount = 0;
+  double total = 0.0;
+  int deliveryCharge = 0;
+  double finalTotal = 0;
+
+  TextEditingController discountController = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -32,10 +39,44 @@ class _PosCartState extends State<PosCart> {
       var cartData = jsonDecode(cartResponse.body);
       setState(() {
         cartItems = List<Map<String, dynamic>>.from(cartData);
+        for (var item in cartItems!) {
+          total += item['subtotal'];
+        }
+        finalTotalCalculate();
       });
     } else {
       print("Failed to fetch cart products");
     }
+  }
+
+  updateCart(
+    int cartId,
+    int cartQuantity,
+  ) async {
+    try {
+      var updateResponse =
+          await http.put(Uri.parse("http://localhost:8080/api/cart/edit"),
+              headers: {'Content-Type': 'application/json'},
+              body: json.encode({
+                'id': cartId,
+                'quantity': cartQuantity,
+              }));
+
+      if (updateResponse.statusCode == 200) {
+        await getCartProducts();
+        setState(() {});
+      } else {
+        print("Something went wrong to update cart");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  finalTotalCalculate() {
+    double discountTotal = total - ((total * discount!) / 100);
+    double deliveryTotal = discountTotal + deliveryCharge;
+    finalTotal = deliveryTotal;
   }
 
   @override
@@ -70,7 +111,6 @@ class _PosCartState extends State<PosCart> {
               ),
               DropdownButtonFormField<String>(
                 value: selectedOrderType,
-
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15))),
@@ -146,8 +186,14 @@ class _PosCartState extends State<PosCart> {
                             ],
                             onChanged: (value) {
                               setState(() {
-                                selectedDeliveryArea =
-                                    value; // Update the selected category
+                                if (value == "Dhaka") {
+                                  deliveryCharge = 70;
+                                } else if (value == "Gazipur") {
+                                  deliveryCharge = 100;
+                                } else if (value == "Free") {
+                                  deliveryCharge = 0;
+                                }
+                                finalTotalCalculate(); // Update the selected category
                               });
                             },
                             isExpanded: true,
@@ -240,7 +286,7 @@ class _PosCartState extends State<PosCart> {
                 height: 10,
               ),
               Divider(),
-              //   Cart Data Table
+              //   Cart Data Table======================================================
               if (cartItems != null)
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -258,29 +304,35 @@ class _PosCartState extends State<PosCart> {
                         cells: [
                           DataCell(Text(cartItem['name'])),
                           DataCell(Text(cartItem['price'].toString())),
-
                           DataCell(Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    if (cartItem['quantity'] > 0) {
-                                      cartItem['quantity']--;
+                                    if (cartItem['quantity'] > 1) {
+                                      updateCart(
+                                        cartItem['id'],
+                                        cartItem['quantity'] - 1,
+                                      );
                                     }
                                   });
                                 },
                                 icon: Icon(Icons.remove),
-                                style: ButtonStyle(shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: BorderSide(color: Colors.deepPurpleAccent))
-                                ),
-                                  foregroundColor: WidgetStatePropertyAll(
-                                    Colors.deepPurpleAccent
-                                  )
-                                ),
+                                style: ButtonStyle(
+                                    shape: WidgetStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            side: BorderSide(
+                                                color:
+                                                    Colors.deepPurpleAccent))),
+                                    foregroundColor: WidgetStatePropertyAll(
+                                        Colors.deepPurpleAccent)),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0),
                                 child: Text(
                                   cartItem['quantity'].toString(),
                                   style: TextStyle(fontSize: 18.0),
@@ -289,16 +341,22 @@ class _PosCartState extends State<PosCart> {
                               IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    cartItem['quantity']++;
+                                    updateCart(
+                                      cartItem['id'],
+                                      cartItem['quantity'] + 1,
+                                    );
                                   });
                                 },
                                 icon: Icon(Icons.add),
-                                style: ButtonStyle(shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),side: BorderSide(color: Colors.deepPurpleAccent))
-                                ),
-                                    foregroundColor: WidgetStatePropertyAll(
-                                        Colors.deepPurpleAccent
-                                    ),
+                                style: ButtonStyle(
+                                  shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          side: BorderSide(
+                                              color: Colors.deepPurpleAccent))),
+                                  foregroundColor: WidgetStatePropertyAll(
+                                      Colors.deepPurpleAccent),
                                 ),
                               ),
                             ],
@@ -323,19 +381,27 @@ class _PosCartState extends State<PosCart> {
                   Expanded(
                     flex: 9,
                     child: TextFormField(
+                      controller: discountController,
                       decoration: InputDecoration(
-                        floatingLabelStyle: TextStyle(color: Colors.deepPurpleAccent),
+                        floatingLabelStyle:
+                            TextStyle(color: Colors.deepPurpleAccent),
                         focusedBorder: OutlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.deepPurpleAccent, width: 2),
+                          borderSide: BorderSide(
+                              color: Colors.deepPurpleAccent, width: 2),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        label: Text("Discount"),
+                        label: Text("Discount %"),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
                           borderSide: BorderSide(color: Colors.black),
                         ),
                       ),
+                      onChanged: (value) {
+                        setState(() {
+                          discount = int.parse(value);
+                          finalTotalCalculate();
+                        });
+                      },
                     ),
                   ),
                   Spacer(),
@@ -343,7 +409,6 @@ class _PosCartState extends State<PosCart> {
                     flex: 9,
                     child: DropdownButtonFormField<String>(
                       value: selectedTransactionType,
-
                       decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15))),
@@ -370,13 +435,86 @@ class _PosCartState extends State<PosCart> {
                       ],
                       onChanged: (value) {
                         setState(() {
-                          selectedTransactionType = value; // Update the selected value
+                          selectedTransactionType =
+                              value; // Update the selected value
                         });
                       },
                       isExpanded: true,
                     ),
                   ),
                 ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  columnSpacing: 40, // Space between columns
+                  columns: [
+                    DataColumn(label: Text('Total')),
+                    DataColumn(label: Text('Discount %')),
+                    DataColumn(label: Text('Delivery Charge')),
+                    DataColumn(label: Text('Net Total')),
+                  ],
+                  rows: [
+                    DataRow(cells: [
+                      DataCell(Text(total.toStringAsFixed(2))),
+                      DataCell(Text(discount.toString())),
+                      DataCell(Text(deliveryCharge.toString())),
+                      DataCell(Text(finalTotal.toStringAsFixed(2))),
+                    ]),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.lightBlue[200],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.fromBorderSide(
+                        BorderSide(width: 2, color: Colors.blue)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Grand Total : ${finalTotal.toStringAsFixed(2)} TK",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                width: 200,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ButtonStyle(
+                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        side: BorderSide(color: Colors.green, width: 2),
+                      )),
+                      backgroundColor:
+                          WidgetStatePropertyAll(Colors.greenAccent[100])),
+                  child: Center(
+                    child: Text(
+                      "Place Order",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
               ),
             ],
           ),
