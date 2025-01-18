@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../orders/order_details.dart';
+
 class OnlineSales extends StatefulWidget {
   const OnlineSales({super.key});
 
@@ -28,7 +30,32 @@ class _OnlineSalesState extends State<OnlineSales> {
       onlineSale = List<Map<String, dynamic>>.from(onlineSaleData);
     });
   }
+  deleteOnlineSale(int id)async{
+    final deleteResponse = await http.delete(
+      Uri.parse("http://localhost:8080/api/sale/$id"),
+    );
+    if(deleteResponse.statusCode == 200){
+      getOnlineSales();
+      // Show a success SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 5,
+          content: Text('Item successfully deleted!'),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.green[300],
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(top: 10, left: 10, right: 10), // Top positioning
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          dismissDirection: DismissDirection.up, // Dismiss upwards
 
+        ),
+      );
+    }else{
+      print("error to delete sale code Status: ${deleteResponse.statusCode}");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return onlineSale != null
@@ -60,10 +87,10 @@ class _OnlineSalesState extends State<OnlineSales> {
                             // Handle actions here
                             if (value == 'Delete') {
                               // Call delete logic
-                              print('Delete clicked for ID: ${sale['id']}');
+                              deleteOnlineSale(sale['id']);
                             } else if (value == 'Details') {
                               // Call details logic
-                              print('Details clicked for ID: ${sale['id']}');
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(id: sale['id']),));
                             } else if (value == 'Return') {
                               // Call return logic
                               print('Return clicked for ID: ${sale['id']}');

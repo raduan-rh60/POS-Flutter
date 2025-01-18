@@ -63,7 +63,7 @@ class _SalesState extends State<Sales> {
               ),
               ListTile(
                 leading: Icon(Icons.add_shopping_cart_outlined),
-                title: Text('Categories'),
+                title: Text('Online Sales'),
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>OnlineSalesView()));
                 },

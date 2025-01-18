@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:pos_system/orders/order_details.dart';
 
 class PosCart extends StatefulWidget {
   const PosCart({super.key});
@@ -10,23 +11,44 @@ class PosCart extends StatefulWidget {
 }
 
 class _PosCartState extends State<PosCart> {
+  // Controllers for TextFormFields
+  final TextEditingController customerNameController = TextEditingController();
+  final TextEditingController customerPhoneController = TextEditingController();
+  final TextEditingController deliveryAddressController =
+      TextEditingController();
+  final TextEditingController noteController = TextEditingController();
+  final TextEditingController discountController = TextEditingController();
+
+  // Variables for DropdownButtonFormField
   String? selectedOrderType;
-  String? selectedDeliveryArea;
-  String? selectedOrderStatus;
+  String selectedDeliveryArea = "Free";
+  String selectedOrderStatus = "COMPLETE";
   String? selectedTransactionType;
 
+  // variables for calculation
   int discount = 0;
   double total = 0.0;
   int deliveryCharge = 0;
   double finalTotal = 0;
-
-  TextEditingController discountController = TextEditingController();
+  int totalQuantity = 0;
+  double totalPurchasePrice = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getCartProducts();
+  }
+
+  @override
+  void dispose() {
+    // Dispose controllers when the widget is removed
+    customerNameController.dispose();
+    customerPhoneController.dispose();
+    deliveryAddressController.dispose();
+    noteController.dispose();
+    discountController.dispose();
+    super.dispose();
   }
 
   // cart Data
@@ -39,8 +61,13 @@ class _PosCartState extends State<PosCart> {
       var cartData = jsonDecode(cartResponse.body);
       setState(() {
         cartItems = List<Map<String, dynamic>>.from(cartData);
+        total = 0;
+        totalQuantity = 0;
+        totalPurchasePrice = 0;
         for (var item in cartItems!) {
           total += item['subtotal'];
+          totalQuantity += item['quantity'] as int;
+          totalPurchasePrice += item['subTotalPurchasePrice'];
         }
         finalTotalCalculate();
       });
@@ -49,10 +76,19 @@ class _PosCartState extends State<PosCart> {
     }
   }
 
-  updateCart(
-    int cartId,
-    int cartQuantity,
-  ) async {
+  deleteCartProduct(int id) async {
+    var cartResponse =
+        await http.delete(Uri.parse("http://localhost:8080/api/cart/$id"));
+    if (cartResponse.statusCode == 200) {
+      setState(() {
+        getCartProducts();
+      });
+    } else {
+      print("Failed to fetch cart products");
+    }
+  }
+
+  updateCart(int cartId,int cartQuantity) async {
     try {
       var updateResponse =
           await http.put(Uri.parse("http://localhost:8080/api/cart/edit"),
@@ -64,7 +100,9 @@ class _PosCartState extends State<PosCart> {
 
       if (updateResponse.statusCode == 200) {
         await getCartProducts();
-        setState(() {});
+        setState(() {
+          finalTotalCalculate();
+        });
       } else {
         print("Something went wrong to update cart");
       }
@@ -74,9 +112,121 @@ class _PosCartState extends State<PosCart> {
   }
 
   finalTotalCalculate() {
-    double discountTotal = total - ((total * discount!) / 100);
-    double deliveryTotal = discountTotal + deliveryCharge;
-    finalTotal = deliveryTotal;
+    finalTotal = total - ((total * discount) / 100) + deliveryCharge;
+  }
+
+  // POP up dialogue for the payment confirmation ======================================
+  void showOrderDialog(BuildContext context) {
+    // Calculate total quantity
+
+    // dialogue for confirm order
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          title: Center(child: Text("Order Summary")),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Paying Item:",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(totalQuantity.toString()),
+                ],
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Total Amount:",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(total.toStringAsFixed(2)),
+                ],
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Net Total Amount:",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(finalTotal.toStringAsFixed(2)),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  placeOrder();
+                },
+                style: ButtonStyle(
+                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      side: BorderSide(color: Colors.green, width: 2),
+                    )),
+                    backgroundColor:
+                    WidgetStatePropertyAll(Colors.greenAccent)),
+                child: Center(
+                  child: Text(
+                    "Confirm",
+                    style:
+                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // place Order Method
+  placeOrder() async {
+   try{
+     var placeOrderResponse = await http
+         .post(Uri.parse("http://localhost:8080/api/sale/save"), headers: {
+       'Content-Type': 'application/json', // Set the Content-Type to JSON
+     }, body: jsonEncode({
+                'customerName': customerNameController.text,
+                'customerAddress': deliveryAddressController.text,
+                'customerPhone': customerPhoneController.text,
+                'note': noteController.text,
+                'discount': discount,
+                'totalAmount': finalTotal,
+                'orderType': selectedOrderType.toString(),
+                'orderStatus': selectedOrderStatus.toString(),
+                'transactionType': selectedTransactionType.toString(),
+                'totalPurchasePrice': totalPurchasePrice,
+              }));
+
+     if (placeOrderResponse.statusCode == 200) {
+       clearCart();
+       var orderData = jsonDecode(placeOrderResponse.body);
+       Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(id: orderData['id'],),));
+
+     } else {
+
+       print("Something went wrong to post Product");
+     }
+   }catch(e){
+     print(e);
+   }
+  }
+
+  clearCart()async{
+    final clearCart = await http.patch(
+      Uri.parse("http://localhost:8080/api/cart/status?cartStatus=ORDERED"),
+      headers: {
+        'Content-Type': 'application/json', // Optional, depending on API
+      },
+      body: jsonEncode({}), // Empty body
+    );
   }
 
   @override
@@ -91,7 +241,9 @@ class _PosCartState extends State<PosCart> {
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
+              // Customer Name Field with controller
               TextFormField(
+                controller: customerNameController, // Added controller
                 decoration: InputDecoration(
                   floatingLabelStyle: TextStyle(color: Colors.deepPurpleAccent),
                   focusedBorder: OutlineInputBorder(
@@ -109,11 +261,15 @@ class _PosCartState extends State<PosCart> {
               SizedBox(
                 height: 10,
               ),
+              // Order Type Dropdown with variable
               DropdownButtonFormField<String>(
                 value: selectedOrderType,
+                // Added variable
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15))),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
                 dropdownColor: Color(0xffeaddff),
                 style: TextStyle(color: Color(0xff301069)),
                 hint: const Text("Order Type"),
@@ -129,7 +285,7 @@ class _PosCartState extends State<PosCart> {
                 ],
                 onChanged: (value) {
                   setState(() {
-                    selectedOrderType = value; // Update the selected value
+                    selectedOrderType = value; // Added variable
                   });
                 },
                 isExpanded: true,
@@ -137,7 +293,9 @@ class _PosCartState extends State<PosCart> {
               SizedBox(
                 height: 10,
               ),
+              // Customer Phone Number Field with controller
               TextFormField(
+                controller: customerPhoneController, // Added controller
                 decoration: InputDecoration(
                   floatingLabelStyle: TextStyle(color: Colors.deepPurpleAccent),
                   focusedBorder: OutlineInputBorder(
@@ -155,6 +313,7 @@ class _PosCartState extends State<PosCart> {
               SizedBox(
                 height: 10,
               ),
+              // Delivery Area and Order Status Dropdown (if ONLINE is selected)
               if (selectedOrderType == "ONLINE")
                 Column(
                   children: [
@@ -164,9 +323,12 @@ class _PosCartState extends State<PosCart> {
                           flex: 9,
                           child: DropdownButtonFormField<String>(
                             value: selectedDeliveryArea,
+                            // Added variable
                             decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15))),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
                             dropdownColor: Color(0xffeaddff),
                             style: TextStyle(color: Color(0xff301069)),
                             hint: const Text("Delivery"),
@@ -186,6 +348,7 @@ class _PosCartState extends State<PosCart> {
                             ],
                             onChanged: (value) {
                               setState(() {
+                                selectedDeliveryArea = value!; // Added variable
                                 if (value == "Dhaka") {
                                   deliveryCharge = 70;
                                 } else if (value == "Gazipur") {
@@ -193,7 +356,7 @@ class _PosCartState extends State<PosCart> {
                                 } else if (value == "Free") {
                                   deliveryCharge = 0;
                                 }
-                                finalTotalCalculate(); // Update the selected category
+                                finalTotalCalculate();
                               });
                             },
                             isExpanded: true,
@@ -204,9 +367,12 @@ class _PosCartState extends State<PosCart> {
                           flex: 9,
                           child: DropdownButtonFormField<String>(
                             value: selectedOrderStatus,
+                            // Added variable
                             decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15))),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
                             dropdownColor: Color(0xffeaddff),
                             style: TextStyle(color: Color(0xff301069)),
                             hint: const Text("Order Status"),
@@ -234,8 +400,7 @@ class _PosCartState extends State<PosCart> {
                             ],
                             onChanged: (value) {
                               setState(() {
-                                selectedOrderStatus =
-                                    value; // Update the selected category
+                                selectedOrderStatus = value!; // Added variable
                               });
                             },
                             isExpanded: true,
@@ -247,6 +412,7 @@ class _PosCartState extends State<PosCart> {
                       height: 10,
                     ),
                     TextFormField(
+                      controller: deliveryAddressController, // Added controller
                       decoration: InputDecoration(
                         floatingLabelStyle:
                             TextStyle(color: Colors.deepPurpleAccent),
@@ -267,7 +433,9 @@ class _PosCartState extends State<PosCart> {
               SizedBox(
                 height: 10,
               ),
+              // Note Field with controller
               TextFormField(
+                controller: noteController, // Added controller
                 decoration: InputDecoration(
                   floatingLabelStyle: TextStyle(color: Colors.deepPurpleAccent),
                   focusedBorder: OutlineInputBorder(
@@ -285,7 +453,6 @@ class _PosCartState extends State<PosCart> {
               SizedBox(
                 height: 10,
               ),
-              Divider(),
               //   Cart Data Table======================================================
               if (cartItems != null)
                 SingleChildScrollView(
@@ -363,7 +530,9 @@ class _PosCartState extends State<PosCart> {
                           )),
                           DataCell(Text(cartItem['subtotal'].toString())),
                           DataCell(IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                deleteCartProduct(cartItem['id']);
+                              },
                               icon: Icon(
                                 Icons.delete_outline,
                                 color: Colors.red,
@@ -414,7 +583,7 @@ class _PosCartState extends State<PosCart> {
                               borderRadius: BorderRadius.circular(15))),
                       dropdownColor: Color(0xffeaddff),
                       style: TextStyle(color: Color(0xff301069)),
-                      hint: const Text("Order Type"),
+                      hint: const Text("Payment Type"),
                       items: [
                         DropdownMenuItem(
                           value: "Cash",
@@ -496,7 +665,9 @@ class _PosCartState extends State<PosCart> {
               SizedBox(
                 width: 200,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showOrderDialog(context);
+                  },
                   style: ButtonStyle(
                       shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
