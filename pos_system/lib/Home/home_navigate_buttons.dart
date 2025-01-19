@@ -20,19 +20,20 @@ class _NavigateButtnState extends State<NavigateButtn> {
       width: double.infinity,
       height: 400,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 40),
         child: GridView(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 10),
+              crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 50),
           children: [
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>Products()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Products()));
               },
               child: Column(
                 children: [
                   CircleAvatar(
-                    radius: 25,
+                    radius: 40,
                     backgroundColor: Colors.grey[200],
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -48,12 +49,13 @@ class _NavigateButtnState extends State<NavigateButtn> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>Sales()));
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Sales()));
               },
               child: Column(
                 children: [
                   CircleAvatar(
-                    radius: 25,
+                    radius: 40,
                     backgroundColor: Colors.grey[200],
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -69,12 +71,15 @@ class _NavigateButtnState extends State<NavigateButtn> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnProductView()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ReturnProductView()));
               },
               child: Column(
                 children: [
                   CircleAvatar(
-                    radius: 25,
+                    radius: 40,
                     backgroundColor: Colors.grey[200],
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -90,12 +95,13 @@ class _NavigateButtnState extends State<NavigateButtn> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>PurchaseView()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => PurchaseView()));
               },
               child: Column(
                 children: [
                   CircleAvatar(
-                    radius: 25,
+                    radius: 40,
                     backgroundColor: Colors.grey[200],
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -111,12 +117,13 @@ class _NavigateButtnState extends State<NavigateButtn> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>DamageData()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => DamageData()));
               },
               child: Column(
                 children: [
                   CircleAvatar(
-                    radius: 25,
+                    radius: 40,
                     backgroundColor: Colors.grey[200],
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -130,15 +137,15 @@ class _NavigateButtnState extends State<NavigateButtn> {
                 ],
               ),
             ),
-
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>PosProducts()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => PosProducts()));
               },
               child: Column(
                 children: [
                   CircleAvatar(
-                    radius: 25,
+                    radius: 40,
                     backgroundColor: Colors.grey[200],
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

@@ -11,18 +11,19 @@ class Brands extends StatefulWidget {
 }
 
 class _BrandsState extends State<Brands> {
+  final TextEditingController _brandName = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getCategory();
+    getBrand();
   }
 
   List<Map<String, dynamic>>? brands;
 
-  getCategory() async {
+  getBrand() async {
     var brandResponse =
-    await http.get(Uri.parse("http://localhost:8080/api/brand"));
+        await http.get(Uri.parse("http://localhost:8080/api/brand"));
     var brandData = jsonDecode(brandResponse.body);
 
     setState(() {
@@ -30,81 +31,101 @@ class _BrandsState extends State<Brands> {
     });
   }
 
+  postBrand() async {
+    var brandResponse =
+        await http.post(Uri.parse("http://localhost:8080/api/brand/save"),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'name': _brandName.text,
+            }));
+    if (brandResponse.statusCode == 200) {
+      setState(() {
+        getBrand();
+      });
+    } else {
+      print('error post Brand');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return brands!=null
+    return brands != null
         ? Scaffold(
-      appBar: AppBar(
-        title: Text("Brands"),
-      ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 200,
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            appBar: AppBar(
+              title: Text("Brands"),
+            ),
+            body: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                        BorderSide(color: Colors.deepPurpleAccent),
-                        borderRadius: BorderRadius.circular(15),
+                SizedBox(
+                  height: 200,
+                  width: double.infinity,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: TextFormField(
+                          controller: _brandName,
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.deepPurpleAccent),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            label: Text("Brand Name"),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide(color: Colors.black)),
+                          ),
+                        ),
                       ),
-                      label: Text("Brand Name"),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(color: Colors.black)),
-                    ),
+                      ElevatedButton(
+                        onPressed: () {
+                          postBrand();
+                        },
+                        style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(Colors.deepPurpleAccent),
+                            shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Add Brand",
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ButtonStyle(
-                      backgroundColor:
-                      WidgetStatePropertyAll(Colors.deepPurpleAccent),
-                      shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Add Brand",
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).height - 400,
+                  child: ListView.builder(
+                    itemCount: brands!.length,
+                    itemBuilder: (context, index) {
+                      var brand = brands![index];
+                      return Card(
+                        elevation: 4,
+                        margin: EdgeInsets.all(8),
+                        child: ListTile(
+                          title: Text(
+                            brand["name"],
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text("Products: ${brand["productCount"]}"),
+                        ),
+                      );
+                    },
                   ),
                 )
               ],
             ),
-          ),
-          SizedBox(
-            height: MediaQuery.sizeOf(context).height - 400,
-            child: ListView.builder(
-              itemCount: brands!.length,
-              itemBuilder: (context, index) {
-                var brand = brands![index];
-                return Card(
-                  elevation: 4,
-                  margin: EdgeInsets.all(8),
-                  child: ListTile(
-                    title: Text(
-                      brand["name"],
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                        "Products: ${brand["productCount"]}"),
-                  ),
-                );
-              },
-            ),
           )
-        ],
-      ),
-    )
         : Center(child: CircularProgressIndicator());
   }
 }

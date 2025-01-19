@@ -11,6 +11,7 @@ class Category extends StatefulWidget {
 }
 
 class _CategoryState extends State<Category> {
+  final TextEditingController _categoryName = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -30,9 +31,27 @@ class _CategoryState extends State<Category> {
     });
   }
 
+  postCategory() async {
+    var brandResponse =
+        await http.post(Uri.parse("http://localhost:8080/api/category/save"),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'name': _categoryName.text,
+            }));
+    if (brandResponse.statusCode == 200) {
+      setState(() {
+        getCategory();
+      });
+    } else {
+      print('error post Brand');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return categories!=null
+    return categories != null
         ? Scaffold(
             appBar: AppBar(
               title: Text("Categories"),
@@ -48,6 +67,7 @@ class _CategoryState extends State<Category> {
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: TextFormField(
+                          controller: _categoryName,
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderSide:
@@ -62,7 +82,9 @@ class _CategoryState extends State<Category> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          postCategory();
+                        },
                         style: ButtonStyle(
                             backgroundColor:
                                 WidgetStatePropertyAll(Colors.deepPurpleAccent),
@@ -95,8 +117,8 @@ class _CategoryState extends State<Category> {
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Text(
-                              "Products: ${category["productCount"]}"),
+                          subtitle:
+                              Text("Products: ${category["productCount"]}"),
                         ),
                       );
                     },
