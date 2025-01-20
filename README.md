@@ -41,34 +41,9 @@ This Flutter project is a mobile application designed for managing orders, sales
 
 ---
 
-## Backend API Endpoints
-### 1. Place Order
-- **Endpoint**: `POST /api/sale/save`
-- **Request Body**:
-  ```json
-  {
-    "customerName": "string",
-    "customerAddress": "string",
-    "customerPhone": "string",
-    "note": "string",
-    "discount": "number",
-    "totalAmount": "number",
-    "orderType": "string",
-    "orderStatus": "string",
-    "transactionType": "string",
-    "totalPurchasePrice": "number"
-  }
-  ```
+## Backend Structure
+- Backend is build on Spring boot and the REST API is used on this project.
 
-### 2. Update Order Status
-- **Endpoint**: `PATCH /api/cart/status?cartStatus={status}`
-- **Request Parameters**:
-  - `cartStatus` (string): The new status of the cart.
-
-### 3. Delete Sale
-- **Endpoint**: `DELETE /api/sale/{id}`
-
----
 
 ## Important Files
 - **`main.dart`**: Entry point of the application.
