@@ -1,3 +1,5 @@
+
+
 # Flutter POS Application
 
 This Flutter project is a mobile application designed for managing orders, sales, and customer details for a POS platform. It integrates with a backend server for operations like placing orders, updating status, and managing sales.
