@@ -102,15 +102,6 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ],
                       ),
                       SizedBox(height: 10),
-                      // Sale Time
-                      Row(
-                        children: [
-                          Text("Sale Time: "),
-                          SizedBox(width: 10),
-                          Text(orderData['saleTime'].toString()),
-                        ],
-                      ),
-                      SizedBox(height: 10),
                       // Customer Phone
                       Row(
                         children: [
@@ -156,15 +147,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ],
                       ),
                       SizedBox(height: 10),
-                      // Total Purchase Price
-                      Row(
-                        children: [
-                          Text("Total Purchase Price: "),
-                          SizedBox(width: 10),
-                          Text(orderData['totalPurchasePrice'].toString()),
-                        ],
-                      ),
-                      SizedBox(height: 10),
+
                       // Order Type
                       Row(
                         children: [

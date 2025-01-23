@@ -50,10 +50,13 @@ class _HomeState extends State<Home> {
             ListTile(
               leading: Icon(Icons.home),
               title: Text('Home'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Home()));
+              },
             ),
             ListTile(
-              leading: Icon(Icons.home),
+              leading: Icon(Icons.shopping_cart),
               title: Text('POS Module'),
               onTap: () {
                 Navigator.push(context,

@@ -48,7 +48,7 @@ class _DamageDataState extends State<DamageData> {
             child: Row(
               children: [
                 Icon(Icons.add_circle_outline_sharp),
-                Text(" Add Purchase")
+                Text(" Add Damages")
               ],
             ),
           ),
