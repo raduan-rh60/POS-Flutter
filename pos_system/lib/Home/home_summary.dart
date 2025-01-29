@@ -3,6 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../main.dart';
+
 class HomeSummary extends StatefulWidget {
   const HomeSummary({super.key});
 
@@ -26,7 +28,7 @@ class _HomeSummaryState extends State<HomeSummary> {
     try {
       // Make the HTTP GET request
       final response =
-          await http.get(Uri.parse("http://localhost:8080/api/sale"));
+          await http.get(Uri.parse("http://$ip:8080/api/sale"));
 
       if (response.statusCode == 200) {
         // Parse the JSON response
@@ -50,7 +52,7 @@ class _HomeSummaryState extends State<HomeSummary> {
     try {
       // Make the HTTP GET request
       final response =
-          await http.get(Uri.parse("http://localhost:8080/api/purchases"));
+          await http.get(Uri.parse("http://$ip:8080/api/purchases"));
 
       if (response.statusCode == 200) {
         // Parse the JSON response

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pos_system/pos/pos_cart.dart';
 
+import '../main.dart';
+
 class PosProducts extends StatefulWidget {
   const PosProducts({super.key});
 
@@ -29,7 +31,7 @@ class _PosProductsState extends State<PosProducts> {
   getProductData() async {
     try {
       var productsResponse =
-      await http.get(Uri.parse("http://localhost:8080/api/product"));
+      await http.get(Uri.parse("http://$ip:8080/api/product"));
       var productData = jsonDecode(productsResponse.body);
 
       setState(() {
@@ -44,7 +46,7 @@ class _PosProductsState extends State<PosProducts> {
   getCartProducts() async {
     try {
       var cartResponse =
-      await http.get(Uri.parse("http://localhost:8080/api/cart"));
+      await http.get(Uri.parse("http://$ip:8080/api/cart"));
       if (cartResponse.statusCode == 200) {
         var cartData = jsonDecode(cartResponse.body);
         setState(() {
@@ -61,7 +63,7 @@ class _PosProductsState extends State<PosProducts> {
   getCategory() async {
     try {
       var getCategories =
-      await http.get(Uri.parse("http://localhost:8080/api/category"));
+      await http.get(Uri.parse("http://$ip:8080/api/category"));
       if (getCategories.statusCode == 200) {
         var categoryResponse = jsonDecode(getCategories.body);
         setState(() {
@@ -78,7 +80,7 @@ class _PosProductsState extends State<PosProducts> {
   passProduct(int productId) async {
     try {
       var passProduct = await http.post(
-        Uri.parse("http://localhost:8080/api/cart/new?productId=$productId"),
+        Uri.parse("http://$ip:8080/api/cart/new?productId=$productId"),
         body: null,
       );
       if (passProduct.statusCode == 200) {

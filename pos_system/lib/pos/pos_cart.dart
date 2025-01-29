@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pos_system/orders/order_details.dart';
 
+import '../main.dart';
+
 class PosCart extends StatefulWidget {
   const PosCart({super.key});
 
@@ -56,7 +58,7 @@ class _PosCartState extends State<PosCart> {
 
   getCartProducts() async {
     var cartResponse =
-        await http.get(Uri.parse("http://localhost:8080/api/cart"));
+        await http.get(Uri.parse("http://$ip:8080/api/cart"));
     if (cartResponse.statusCode == 200) {
       var cartData = jsonDecode(cartResponse.body);
       setState(() {
@@ -78,7 +80,7 @@ class _PosCartState extends State<PosCart> {
 
   deleteCartProduct(int id) async {
     var cartResponse =
-        await http.delete(Uri.parse("http://localhost:8080/api/cart/$id"));
+        await http.delete(Uri.parse("http://$ip:8080/api/cart/$id"));
     if (cartResponse.statusCode == 200) {
       setState(() {
         getCartProducts();
@@ -91,7 +93,7 @@ class _PosCartState extends State<PosCart> {
   updateCart(int cartId,int cartQuantity) async {
     try {
       var updateResponse =
-          await http.put(Uri.parse("http://localhost:8080/api/cart/edit"),
+          await http.put(Uri.parse("http://$ip:8080/api/cart/edit"),
               headers: {'Content-Type': 'application/json'},
               body: json.encode({
                 'id': cartId,
@@ -190,7 +192,7 @@ class _PosCartState extends State<PosCart> {
   placeOrder() async {
    try{
      var placeOrderResponse = await http
-         .post(Uri.parse("http://localhost:8080/api/sale/save"), headers: {
+         .post(Uri.parse("http://$ip:8080/api/sale/save"), headers: {
        'Content-Type': 'application/json', // Set the Content-Type to JSON
      }, body: jsonEncode({
                 'customerName': customerNameController.text,
@@ -221,7 +223,7 @@ class _PosCartState extends State<PosCart> {
 
   clearCart()async{
     final clearCart = await http.patch(
-      Uri.parse("http://localhost:8080/api/cart/status?cartStatus=ORDERED"),
+      Uri.parse("http://$ip:8080/api/cart/status?cartStatus=ORDERED"),
       headers: {
         'Content-Type': 'application/json', // Optional, depending on API
       },

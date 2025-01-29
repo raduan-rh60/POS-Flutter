@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jiffy/jiffy.dart';
+import 'package:pos_system/damage/damage_form.dart';
+
+import '../main.dart';
 
 class DamageData extends StatefulWidget {
   const DamageData({super.key});
@@ -23,7 +26,7 @@ class _DamageDataState extends State<DamageData> {
 
   getCategory() async {
     var damageResponse =
-    await http.get(Uri.parse("http://localhost:8080/api/damages"));
+    await http.get(Uri.parse("http://$ip:8080/api/damages"));
     var damageData = jsonDecode(damageResponse.body);
 
     setState(() {
@@ -41,7 +44,9 @@ class _DamageDataState extends State<DamageData> {
       floatingActionButton: SizedBox(
         width: 150,
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DamageReport(),));
+          },
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Padding(
             padding: EdgeInsets.only(left: 15),

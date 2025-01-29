@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jiffy/jiffy.dart';
 
+import '../main.dart';
+
 class PurchaseData extends StatefulWidget {
   const PurchaseData({super.key});
 
@@ -22,7 +24,7 @@ class _PurchaseDataState extends State<PurchaseData> {
 
   getPurchaseData() async {
     var purchaseResponse =
-    await http.get(Uri.parse("http://localhost:8080/api/purchases"));
+    await http.get(Uri.parse("http://$ip:8080/api/purchases"));
     var purchaseData = jsonDecode(purchaseResponse.body);
 
     setState(() {

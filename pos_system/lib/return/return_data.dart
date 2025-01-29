@@ -4,6 +4,8 @@ import 'dart:convert';
 
 import 'package:pos_system/orders/order_details.dart';
 
+import '../main.dart';
+
 class ReturnData extends StatefulWidget {
   const ReturnData({super.key});
 
@@ -22,7 +24,7 @@ class _ReturnDataState extends State<ReturnData> {
 
   getGeneralSales() async {
     var productReturn = await http.get(
-      Uri.parse("http://localhost:8080/api/return"),
+      Uri.parse("http://$ip:8080/api/return"),
     );
     var productReturnData = jsonDecode(productReturn.body);
 

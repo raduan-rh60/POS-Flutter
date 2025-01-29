@@ -4,6 +4,8 @@ import 'dart:convert';
 
 import 'package:pos_system/orders/order_details.dart';
 
+import '../main.dart';
+
 class GeneralSales extends StatefulWidget {
   const GeneralSales({super.key});
 
@@ -22,7 +24,7 @@ class _GeneralSalesState extends State<GeneralSales> {
 
   getGeneralSales() async {
     var generalSales = await http.get(
-      Uri.parse("http://localhost:8080/api/sale/order-type?orderType=GENERAL"),
+      Uri.parse("http://$ip:8080/api/sale/order-type?orderType=GENERAL"),
     );
     var generalSaleData = jsonDecode(generalSales.body);
 
@@ -33,7 +35,7 @@ class _GeneralSalesState extends State<GeneralSales> {
 
   deleteGeneralSale(int id)async{
     final deleteResponse = await http.delete(
-      Uri.parse("http://localhost:8080/api/sale/$id"),
+      Uri.parse("http://$ip:8080/api/sale/$id"),
     );
     if(deleteResponse.statusCode == 200){
       getGeneralSales();
@@ -93,13 +95,10 @@ class _GeneralSalesState extends State<GeneralSales> {
                             } else if (value == 'Details') {
                               // Call details logic
                               Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(id: sale['id']),));
-                            } else if (value == 'Return') {
-                              // Call return logic
-                              print('Return clicked for ID: ${sale['id']}');
                             }
                           }
                         },
-                        items: <String>['Delete', 'Details', 'Return']
+                        items: <String>['Delete', 'Details']
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,

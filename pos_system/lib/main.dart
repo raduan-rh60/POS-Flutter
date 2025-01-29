@@ -4,6 +4,9 @@ import 'package:device_preview/device_preview.dart';
 import 'package:pos_system/Home/home.dart';
 import 'package:pos_system/Login/login.dart';
 
+String ip = '192.168.1.246';
+// String ip = '192.168.0.103';
+
 void main() {
   runApp(const MyApp());
 }

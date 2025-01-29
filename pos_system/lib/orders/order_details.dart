@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../main.dart';
 import '../pos/pos_products.dart';
 
 class OrderDetails extends StatefulWidget {
@@ -27,7 +28,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   getOrderData() async {
     try {
       var orderResponse = await http
-          .get(Uri.parse("http://localhost:8080/api/sale/${widget.id}"));
+          .get(Uri.parse("http://$ip:8080/api/sale/${widget.id}"));
       if (orderResponse.statusCode == 200) {
         var data = jsonDecode(orderResponse.body);
         setState(() {

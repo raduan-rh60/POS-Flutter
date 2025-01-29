@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../main.dart';
+
 class Brands extends StatefulWidget {
   const Brands({super.key});
 
@@ -23,7 +25,7 @@ class _BrandsState extends State<Brands> {
 
   getBrand() async {
     var brandResponse =
-        await http.get(Uri.parse("http://localhost:8080/api/brand"));
+        await http.get(Uri.parse("http://$ip:8080/api/brand"));
     var brandData = jsonDecode(brandResponse.body);
 
     setState(() {
@@ -33,7 +35,7 @@ class _BrandsState extends State<Brands> {
 
   postBrand() async {
     var brandResponse =
-        await http.post(Uri.parse("http://localhost:8080/api/brand/save"),
+        await http.post(Uri.parse("http://$ip:8080/api/brand/save"),
             headers: {
               'Content-Type': 'application/json',
             },

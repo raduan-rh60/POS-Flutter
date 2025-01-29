@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pos_system/Home/home.dart';
+import 'package:pos_system/main.dart';
 import 'package:pos_system/product/add_product.dart';
 import 'package:pos_system/product/brand.dart';
 import 'package:pos_system/product/category.dart';
@@ -26,7 +27,7 @@ class _ProductsState extends State<Products> {
 
   getProductData() async {
     var productsResponse =
-        await http.get(Uri.parse("http://localhost:8080/api/product"));
+        await http.get(Uri.parse("http://$ip:8080/api/product"));
     var productData = jsonDecode(productsResponse.body);
 
     setState(() {

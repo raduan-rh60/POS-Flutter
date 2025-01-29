@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../main.dart';
+
 class Category extends StatefulWidget {
   const Category({super.key});
 
@@ -23,7 +25,7 @@ class _CategoryState extends State<Category> {
 
   getCategory() async {
     var categoryResponse =
-        await http.get(Uri.parse("http://localhost:8080/api/category"));
+        await http.get(Uri.parse("http://$ip:8080/api/category"));
     var categoryData = jsonDecode(categoryResponse.body);
 
     setState(() {
@@ -33,7 +35,7 @@ class _CategoryState extends State<Category> {
 
   postCategory() async {
     var brandResponse =
-        await http.post(Uri.parse("http://localhost:8080/api/category/save"),
+        await http.post(Uri.parse("http://$ip:8080/api/category/save"),
             headers: {
               'Content-Type': 'application/json',
             },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../main.dart';
 import '../orders/order_details.dart';
 
 class OnlineSales extends StatefulWidget {
@@ -22,7 +23,7 @@ class _OnlineSalesState extends State<OnlineSales> {
 
   getOnlineSales() async {
     var onlineSales = await http.get(
-      Uri.parse("http://localhost:8080/api/sale/order-type?orderType=ONLINE"),
+      Uri.parse("http://$ip:8080/api/sale/order-type?orderType=ONLINE"),
     );
     var onlineSaleData = jsonDecode(onlineSales.body);
 
@@ -32,7 +33,7 @@ class _OnlineSalesState extends State<OnlineSales> {
   }
   deleteOnlineSale(int id)async{
     final deleteResponse = await http.delete(
-      Uri.parse("http://localhost:8080/api/sale/$id"),
+      Uri.parse("http://$ip:8080/api/sale/$id"),
     );
     if(deleteResponse.statusCode == 200){
       getOnlineSales();
@@ -91,13 +92,10 @@ class _OnlineSalesState extends State<OnlineSales> {
                             } else if (value == 'Details') {
                               // Call details logic
                               Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(id: sale['id']),));
-                            } else if (value == 'Return') {
-                              // Call return logic
-                              print('Return clicked for ID: ${sale['id']}');
                             }
                           }
                         },
-                        items: <String>['Delete', 'Details', 'Return']
+                        items: <String>['Delete', 'Details']
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
