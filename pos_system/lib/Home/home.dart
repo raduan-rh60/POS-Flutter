@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
                 children: [
                   CircleAvatar(
                     radius: 35,
-                    backgroundImage: AssetImage("user.jpg"),
+                    backgroundImage: AssetImage("assets/user.jpg"),
                   ),
                   Text(
                     "Raduan",
@@ -134,7 +134,7 @@ class _HomeState extends State<Home> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: Image.asset(
-                      "user.jpg",
+                      "assets/user.jpg",
                       width: 45,
                       height: 45,
                     ),
@@ -169,7 +169,7 @@ class _HomeState extends State<Home> {
             // Home Daily Summary Section
             HomeSummary(),
             // Home Icon Button Section
-            NavigateButtn(),
+            NavigateButton(),
           ],
         ),
       ),

@@ -6,14 +6,14 @@ import 'package:pos_system/purchase/purchase_view.dart';
 import 'package:pos_system/return/return_product_view.dart';
 import 'package:pos_system/sales/general_sales_view.dart';
 
-class NavigateButtn extends StatefulWidget {
-  const NavigateButtn({super.key});
+class NavigateButton extends StatefulWidget {
+  const NavigateButton({super.key});
 
   @override
-  State<NavigateButtn> createState() => _NavigateButtnState();
+  State<NavigateButton> createState() => _NavigateButtonState();
 }
 
-class _NavigateButtnState extends State<NavigateButtn> {
+class _NavigateButtonState extends State<NavigateButton> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -38,7 +38,7 @@ class _NavigateButtnState extends State<NavigateButtn> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.asset(
-                        "icons/products.png",
+                        "assets/icons/products.png",
                         fit: BoxFit.fitWidth,
                       ),
                     ),
@@ -60,7 +60,7 @@ class _NavigateButtnState extends State<NavigateButtn> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.asset(
-                        "icons/sales.png",
+                        "assets/icons/sales.png",
                         fit: BoxFit.fitWidth,
                       ),
                     ),
@@ -84,7 +84,7 @@ class _NavigateButtnState extends State<NavigateButtn> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.asset(
-                        "icons/return.png",
+                        "assets/icons/return.png",
                         fit: BoxFit.fitWidth,
                       ),
                     ),
@@ -106,7 +106,7 @@ class _NavigateButtnState extends State<NavigateButtn> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.asset(
-                        "icons/purchase.png",
+                        "assets/icons/purchase.png",
                         fit: BoxFit.fitWidth,
                       ),
                     ),
@@ -128,7 +128,7 @@ class _NavigateButtnState extends State<NavigateButtn> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.asset(
-                        "icons/damage.png",
+                        "assets/icons/damage.png",
                         fit: BoxFit.fitWidth,
                       ),
                     ),
@@ -150,7 +150,7 @@ class _NavigateButtnState extends State<NavigateButtn> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.asset(
-                        "icons/pos.png",
+                        "assets/icons/pos.png",
                         fit: BoxFit.fitWidth,
                       ),
                     ),

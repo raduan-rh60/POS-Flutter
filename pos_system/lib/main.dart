@@ -5,10 +5,7 @@ import 'package:pos_system/Home/home.dart';
 import 'package:pos_system/Login/login.dart';
 
 void main() {
-  runApp( DevicePreview(
-    enabled: !kReleaseMode,
-    builder: (context) => MyApp(), // Wrap your app
-  ),);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -24,7 +21,6 @@ class MyApp extends StatelessWidget {
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
       theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
       home: Home(),
     );
   }

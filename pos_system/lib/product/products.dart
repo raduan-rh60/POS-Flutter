@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pos_system/Home/home.dart';
+import 'package:pos_system/product/add_product.dart';
 import 'package:pos_system/product/brand.dart';
 import 'package:pos_system/product/category.dart';
 
@@ -76,7 +77,7 @@ class _ProductsState extends State<Products> {
                   title: Text('Add Product'),
                   onTap: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Home()));
+                        MaterialPageRoute(builder: (context) => AddProduct()));
                   },
                 ),
                 ListTile(
@@ -102,7 +103,9 @@ class _ProductsState extends State<Products> {
         floatingActionButton: SizedBox(
           width: 90,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddProduct(),));
+            },
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Padding(
